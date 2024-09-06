@@ -1490,6 +1490,8 @@ static void yank_status(const char *op, const char *p, int cnt)
 static void undo_push(char *, unsigned, int);
 #endif
 
+#define F(x) do { (x) = text + ((x) - text); } while (0)
+
 // open a hole in text[]
 // might reallocate text[]! use p += text_hole_make(p, ...),
 // and be careful to not use pointers into potentially freed text[]!
@@ -1505,16 +1507,18 @@ static uintptr_t text_hole_make(char *p, int size)	// at "p", make a 'size' byte
 		text_size += end - (text + text_size) + 10240;
 		new_text = xrealloc(text, text_size);
 		bias = (new_text - text);
-		screenbegin += bias;
-		dot         += bias;
-		end         += bias;
-		p           += bias;
+		screenbegin += bias; F(screenbegin);
+		dot         += bias; F(dot);
+		end         += bias; F(end);
+		p           += bias; F(p);
 #if ENABLE_FEATURE_VI_YANKMARK
 		{
 			int i;
 			for (i = 0; i < ARRAY_SIZE(mark); i++)
-				if (mark[i])
+				if (mark[i]) {
 					mark[i] += bias;
+					F(mark[i]);
+				}
 		}
 #endif
 		text = new_text;
@@ -2007,7 +2011,7 @@ static int file_insert(const char *fn, char *p, int initial)
 		goto fi;
 	}
 	size = (statbuf.st_size < INT_MAX ? (int)statbuf.st_size : INT_MAX);
-	p += text_hole_make(p, size);
+	p += text_hole_make(p, size); F(p);
 	cnt = full_read(fd, p, size);
 	if (cnt < 0) {
 		status_line_bold_errno(fn);
@@ -2096,7 +2100,7 @@ static uintptr_t stupid_insert(char *p, char c) // stupidly insert the char c at
 {
 	uintptr_t bias;
 	bias = text_hole_make(p, 1);
-	p += bias;
+	p += bias; F(p);
 	*p = c;
 	return bias;
 }
@@ -2125,6 +2129,7 @@ static char *char_insert(char *p, char c, int undo) // insert the char c at 'p'
 
 	if (c == 22) {		// Is this an ctrl-V?
 		p += stupid_insert(p, '^');	// use ^ to indicate literal next
+		F(p);
 		refresh(FALSE);	// show the ^
 		c = get_one_char();
 		*p = c;
@@ -2211,6 +2216,7 @@ static char *char_insert(char *p, char c, int undo) // insert the char c at 'p'
 		modified_count++;
 #endif
 		p += 1 + stupid_insert(p, c);	// insert the char
+		F(p);
 #if ENABLE_FEATURE_VI_SETOPTS
 		if (showmatch && strchr(")]}", c) != NULL) {
 			showmatching(p - 1);
@@ -2248,7 +2254,7 @@ static char *char_insert(char *p, char c, int undo) // insert the char c at 'p'
 					ntab = col / tabstop;
 					nspc = col % tabstop;
 				}
-				p += text_hole_make(p, ntab + nspc);
+				p += text_hole_make(p, ntab + nspc); F(p);
 # if ENABLE_FEATURE_VI_UNDO
 				undo_push_insert(p, ntab + nspc, undo);
 # endif
@@ -2348,7 +2354,7 @@ static uintptr_t string_insert(char *p, const char *s, int undo) // insert the s
 	undo_push_insert(p, i, undo);
 #endif
 	bias = text_hole_make(p, i);
-	p += bias;
+	p += bias; F(p);
 	memcpy(p, s, i);
 	return bias;
 }
@@ -3296,8 +3302,8 @@ static void colon(char *buf)
 				if (len_R != 0) {	// insert the "replace" pattern, if required
 					bias = string_insert(found, R,
 								TEST_UNDO2 ? ALLOW_UNDO_CHAIN : ALLOW_UNDO);
-					found += bias;
-					ls += bias;
+					found += bias; F(found);
+					ls += bias; F(ls);
 					//q += bias; - recalculated anyway
 				}
 #  if ENABLE_FEATURE_VI_REGEX_SEARCH
@@ -3961,6 +3967,7 @@ static void do_cmd(int c)
 			q = end_line(dot);
 			p = text_hole_delete(p, q, ALLOW_UNDO);	// delete cur line
 			p += string_insert(p, reg[Ureg], ALLOW_UNDO_CHAIN);	// insert orig line
+			F(p);
 			dot = p;
 			dot_skip_over_ws();
 # if ENABLE_FEATURE_VI_YANKMARK && ENABLE_FEATURE_VI_VERBOSE_STATUS
