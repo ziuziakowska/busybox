@@ -4761,7 +4761,10 @@ growjobtab(void)
 			l -= sizeof(*jp);
 			jq--;
 #define joff(p) ((struct job *)((char *)(p) + l))
-#define jmove(p) (p) = (void *)((char *)(p) + offset)
+#define jmove(p) do { \
+	(p) = (void *)((char *)(p) + offset); \
+	(p) = (void *)jp + ((void *)(p) - (void *)jp); \
+} while (0);
 			if (joff(jp)->ps == &jq->ps0)
 				jmove(joff(jp)->ps);
 			if (joff(jp)->prev_job)
