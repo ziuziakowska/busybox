@@ -760,6 +760,10 @@ static int count_lines(char *start, char *stop)
 		start = stop;
 		stop = q;
 	}
+	// avoid reading outside the buffer (from text to end)
+	if (start < text) {
+		return 0;
+	}
 	cnt = 0;
 	stop = end_line(stop);
 	while (start <= stop && start <= end - 1) {
