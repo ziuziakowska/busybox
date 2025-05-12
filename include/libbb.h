@@ -2298,6 +2298,12 @@ extern struct globals *BB_GLOBAL_CONST ptr_to_globals;
 
 #define barrier() asm volatile ("":::"memory")
 
+#ifdef __CHERI__
+#define STORE_REG_CONSTR "=C"
+#else
+#define STORE_REG_CONSTR "=r"
+#endif
+
 #if defined(__clang_major__) && __clang_major__ >= 9
 /* Clang/llvm drops assignment to "constant" storage. Silently.
  * Needs serious convincing to not eliminate the store.
@@ -2307,7 +2313,7 @@ static ALWAYS_INLINE void* not_const_pp(const void *p)
 	void *pp;
 	asm volatile (
 		"# forget that p points to const"
-		: /*outputs*/ "=r" (pp)
+		: /*outputs*/ STORE_REG_CONSTR (pp)
 		: /*inputs*/ "0" (p)
 	);
 	return pp;
