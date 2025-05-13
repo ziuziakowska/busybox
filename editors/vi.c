@@ -4321,7 +4321,7 @@ static void do_cmd(int c)
 		if (c == 'X')
 			dir = -1;
 		do {
-			if (dot[dir] != '\n') {
+			if (&dot[dir] >= text && dot[dir] != '\n') {
 				if (c == 'X')
 					dot--;	// delete prev char
 				dot = yank_delete(dot, dot, PARTIAL, YANKDEL, allow_undo);	// delete char
