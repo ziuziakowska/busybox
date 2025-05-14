@@ -28,7 +28,7 @@ generate_std_and_exit() {
 	$debug && echo "Configuring: bb_common_bufsiz1[] in bss"
 	{
 	echo "enum { COMMON_BUFSIZE = 1024 };"
-	echo "extern char bb_common_bufsiz1[];"
+	echo "extern char bb_common_bufsiz1[] ALIGN_BUFSIZ1;"
 	echo "#define setup_common_bufsiz() ((void)0)"
 	} | regenerate "$common_bufsiz_h"
 	echo "std" >"$common_bufsiz_h.method"
@@ -39,7 +39,7 @@ generate_big_and_exit() {
 	$debug && echo "Configuring: bb_common_bufsiz1[] in bss, COMMON_BUFSIZE = $1"
 	{
 	echo "enum { COMMON_BUFSIZE = $1 };"
-	echo "extern char bb_common_bufsiz1[];"
+	echo "extern char bb_common_bufsiz1[] ALIGN_BUFSIZ1;"
 	echo "#define setup_common_bufsiz() ((void)0)"
 	} | regenerate "$common_bufsiz_h"
 	echo "$2" >"$common_bufsiz_h.method"

@@ -348,6 +348,15 @@ typedef unsigned smalluint;
 #define ALIGN8     __attribute__((aligned(8)))
 #define ALIGN_INT  __attribute__((aligned(sizeof(int))))
 #define ALIGN_PTR  __attribute__((aligned(sizeof(void*))))
+#if defined(__CHERI__)
+/*
+ * bufsiz1 must be cap-size aligned for efficient copying of global structs
+ * on RV64 (sizeof(long long) == 8, sizeof(void *) == 16
+ */
+#define ALIGN_BUFSIZ1 __attribute__((aligned(sizeof(void*))))
+#else
+#define ALIGN_BUFSIZ1 __attribute__((aligned(sizeof(long long))))
+#endif
 
 /*
  * For 0.9.29 and svn, __ARCH_USE_MMU__ indicates no-mmu reliably.

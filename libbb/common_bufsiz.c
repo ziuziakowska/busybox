@@ -50,7 +50,7 @@
 /* We use it for "global" data via *(struct global*)bb_common_bufsiz1.
  * Since gcc insists on aligning struct global's members, it would be a pity
  * (and an alignment fault on some CPUs) to mess it up. */
-char bb_common_bufsiz1[COMMON_BUFSIZE] ALIGNED(sizeof(long long));
+char bb_common_bufsiz1[COMMON_BUFSIZE] ALIGN_BUFSIZ1;
 
 #else
 
@@ -67,8 +67,9 @@ char bb_common_bufsiz1[COMMON_BUFSIZE] ALIGNED(sizeof(long long));
 /*
  * It is not defined as a dummy macro.
  * It means we have to provide this function.
+ * result from xzalloc (malloc) is "suitably aligned for any built-in type"
  */
-char *const bb_common_bufsiz1 __attribute__ ((section (".data")));
+char *const bb_common_bufsiz1 __attribute__ ((section (".data"))) ALIGN_BUFSIZ1;
 void setup_common_bufsiz(void)
 {
 	if (!bb_common_bufsiz1)
@@ -77,7 +78,7 @@ void setup_common_bufsiz(void)
 # else
 #  ifndef bb_common_bufsiz1
    /* bb_common_bufsiz1[] is not aliased to _end[] */
-char bb_common_bufsiz1[COMMON_BUFSIZE] ALIGNED(sizeof(long long));
+char bb_common_bufsiz1[COMMON_BUFSIZE] ALIGN_BUFSIZ1;
 #  endif
 # endif
 
