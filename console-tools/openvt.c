@@ -191,7 +191,7 @@ int openvt_main(int argc UNUSED_PARAM, char **argv)
 			// Compat: even with -c N (try to) disallocate:
 			// # /usr/app/kbd-1.12/bin/openvt -f -c 9 -ws sleep 5
 			// openvt: could not deallocate console 9
-			xioctl(STDIN_FILENO, VT_DISALLOCATE, (void*)(ptrdiff_t)vtno);
+			xioctl(STDIN_FILENO, VT_DISALLOCATE, __fakep(vtno));
 		}
 	}
 	return EXIT_SUCCESS;

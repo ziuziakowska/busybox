@@ -39,7 +39,6 @@ int deallocvt_main(int argc UNUSED_PARAM, char **argv)
 		num = xatou_range(argv[1], 1, 63);
 	}
 
-	/* double cast suppresses "cast to ptr from int of different size" */
-	xioctl(get_console_fd_or_die(), VT_DISALLOCATE, (void *)(ptrdiff_t)num);
+	xioctl(get_console_fd_or_die(), VT_DISALLOCATE, __fakep(num));
 	return EXIT_SUCCESS;
 }

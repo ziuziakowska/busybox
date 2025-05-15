@@ -73,6 +73,6 @@ enum {
 
 void FAST_FUNC console_make_active(int fd, const int vt_num)
 {
-	xioctl(fd, VT_ACTIVATE, (void *)(ptrdiff_t)vt_num);
-	xioctl(fd, VT_WAITACTIVE, (void *)(ptrdiff_t)vt_num);
+	xioctl(fd, VT_ACTIVATE, __fakep(vt_num));
+	xioctl(fd, VT_WAITACTIVE, __fakep(vt_num));
 }
