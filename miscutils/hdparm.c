@@ -1671,12 +1671,12 @@ static void process_dev(char *devname)
 
 	if (getset_readahead == IS_SET) {
 		print_flag(getset_readahead, "fs readahead", Xreadahead);
-		ioctl_or_warn(fd, BLKRASET, (int *)Xreadahead);
+		ioctl_or_warn(fd, BLKRASET, __fakep_u(Xreadahead));
 	}
 #if ENABLE_FEATURE_HDPARM_HDIO_UNREGISTER_HWIF
 	if (unregister_hwif) {
 		printf(" attempting to unregister hwif#%lu\n", hwif);
-		ioctl_or_warn(fd, HDIO_UNREGISTER_HWIF, (int *)(unsigned long)hwif);
+		ioctl_or_warn(fd, HDIO_UNREGISTER_HWIF, __fakep_u(hwif));
 	}
 #endif
 #if ENABLE_FEATURE_HDPARM_HDIO_SCAN_HWIF
@@ -1702,18 +1702,18 @@ static void process_dev(char *devname)
 			else
 				printf("set UDMA mode to %d\n", (piomode-200));
 		}
-		ioctl_or_warn(fd, HDIO_SET_PIO_MODE, (int *)(unsigned long)piomode);
+		ioctl_or_warn(fd, HDIO_SET_PIO_MODE, __fakep(piomode));
 	}
 	if (getset_io32bit == IS_SET) {
 		print_flag(getset_io32bit, "32-bit IO_support flag", io32bit);
-		ioctl_or_warn(fd, HDIO_SET_32BIT, (int *)io32bit);
+		ioctl_or_warn(fd, HDIO_SET_32BIT, __fakep_u(io32bit));
 	}
 	if (getset_mult == IS_SET) {
 		print_flag(getset_mult, "multcount", mult);
 #ifdef HDIO_DRIVE_CMD
-		ioctl_or_warn(fd, HDIO_SET_MULTCOUNT, (void *)mult);
+		ioctl_or_warn(fd, HDIO_SET_MULTCOUNT, __fakep_u(mult));
 #else
-		force_operation |= (!ioctl_or_warn(fd, HDIO_SET_MULTCOUNT, (void *)mult));
+		force_operation |= (!ioctl_or_warn(fd, HDIO_SET_MULTCOUNT, __fakep_u(mult)));
 #endif
 	}
 	if (getset_readonly == IS_SET) {
@@ -1722,27 +1722,27 @@ static void process_dev(char *devname)
 	}
 	if (getset_unmask == IS_SET) {
 		print_flag_on_off(getset_unmask, "unmaskirq", unmask);
-		ioctl_or_warn(fd, HDIO_SET_UNMASKINTR, (int *)unmask);
+		ioctl_or_warn(fd, HDIO_SET_UNMASKINTR, __fakep_u(unmask));
 	}
 #if ENABLE_FEATURE_HDPARM_HDIO_GETSET_DMA
 	if (getset_dma == IS_SET) {
 		print_flag_on_off(getset_dma, "using_dma", dma);
-		ioctl_or_warn(fd, HDIO_SET_DMA, (int *)dma);
+		ioctl_or_warn(fd, HDIO_SET_DMA, __fakep_u(dma));
 	}
 #endif /* FEATURE_HDPARM_HDIO_GETSET_DMA */
 #ifdef HDIO_SET_QDMA
 	if (getset_dma_q == IS_SET) {
 		print_flag_on_off(getset_dma_q, "DMA queue_depth", dma_q);
-		ioctl_or_warn(fd, HDIO_SET_QDMA, (int *)dma_q);
+		ioctl_or_warn(fd, HDIO_SET_QDMA, __fakep_u(dma_q));
 	}
 #endif
 	if (getset_nowerr == IS_SET) {
 		print_flag_on_off(getset_nowerr, "nowerr", nowerr);
-		ioctl_or_warn(fd, HDIO_SET_NOWERR, (int *)nowerr);
+		ioctl_or_warn(fd, HDIO_SET_NOWERR, __fakep_u(nowerr));
 	}
 	if (getset_keep == IS_SET) {
 		print_flag_on_off(getset_keep, "keep_settings", keep);
-		ioctl_or_warn(fd, HDIO_SET_KEEPSETTINGS, (int *)keep);
+		ioctl_or_warn(fd, HDIO_SET_KEEPSETTINGS, __fakep_u(keep));
 	}
 #ifdef HDIO_DRIVE_CMD
 	if (getset_doorlock == IS_SET) {
@@ -2003,7 +2003,7 @@ static void process_dev(char *devname)
 	if (getset_busstate == IS_SET) {
 		print_flag(1, "bus state", busstate);
 		bus_state_value(busstate);
-		ioctl_or_warn(fd, HDIO_SET_BUSSTATE, (int *)(unsigned long)busstate);
+		ioctl_or_warn(fd, HDIO_SET_BUSSTATE, __fakep_u(busstate));
 	}
 	if (getset_busstate) {
 		if (!ioctl_or_warn(fd, HDIO_GET_BUSSTATE, &parm)) {
