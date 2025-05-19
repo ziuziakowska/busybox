@@ -177,9 +177,9 @@ static void handle_accept(isrv_state_t *state, int fd)
 	int n, newfd;
 
 	/* suppress gcc warning "cast from ptr to int of different size" */
-	fcntl(fd, F_SETFL, (int)(ptrdiff_t)(PARAM_TBL[0]) | O_NONBLOCK);
+	fcntl(fd, F_SETFL, (int)(intptr_t)(PARAM_TBL[0]) | O_NONBLOCK);
 	newfd = accept(fd, NULL, 0);
-	fcntl(fd, F_SETFL, (int)(ptrdiff_t)(PARAM_TBL[0]));
+	fcntl(fd, F_SETFL, (int)(intptr_t)(PARAM_TBL[0]));
 	if (newfd < 0) {
 		if (errno == EAGAIN) return;
 		/* Most probably someone gave us wrong fd type
@@ -284,8 +284,7 @@ void isrv_run(
 	isrv_register_fd(state, /*peer:*/ 0, listen_fd);
 	isrv_want_rd(state, listen_fd);
 	/* remember flags to make blocking<->nonblocking switch faster */
-	/* (suppress gcc warning "cast from ptr to int of different size") */
-	PARAM_TBL[0] = (void*)(ptrdiff_t)(fcntl(listen_fd, F_GETFL));
+	PARAM_TBL[0] = __fakep(fcntl(listen_fd, F_GETFL));
 
 	while (1) {
 		struct timeval tv;
