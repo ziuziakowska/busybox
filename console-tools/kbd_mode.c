@@ -84,8 +84,7 @@ int kbd_mode_main(int argc UNUSED_PARAM, char **argv)
 		 * (looks like "-ak" together would cause the same effect as -u)
 		 */
 		opt = opt & UNICODE ? 3 : opt >> 1;
-		/* double cast prevents warnings about widening conversion */
-		xioctl(fd, KDSKBMODE, (void*)(ptrdiff_t)opt);
+		xioctl(fd, KDSKBMODE, __fakep_u(opt));
 	}
 
 	if (ENABLE_FEATURE_CLEAN_UP)

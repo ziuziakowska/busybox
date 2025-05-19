@@ -103,7 +103,7 @@ int showkey_main(int argc UNUSED_PARAM, char **argv)
 		);
 
 		// set raw keyboard mode
-		xioctl(STDIN_FILENO, KDSKBMODE, (void *)(ptrdiff_t)((option_mask32 & OPT_k) ? K_MEDIUMRAW : K_RAW));
+		xioctl(STDIN_FILENO, KDSKBMODE, __fakep_u(((option_mask32 & OPT_k) ? K_MEDIUMRAW : K_RAW)));
 
 		// we should exit on any signal; signals should interrupt read
 		bb_signals_norestart(BB_FATAL_SIGS, record_signo);
@@ -148,7 +148,7 @@ int showkey_main(int argc UNUSED_PARAM, char **argv)
 		}
 
 		// restore keyboard mode
-		xioctl(STDIN_FILENO, KDSKBMODE, (void *)(ptrdiff_t)kbmode);
+		xioctl(STDIN_FILENO, KDSKBMODE, __fakep_u(kbmode));
 	}
 
 	// restore console settings
