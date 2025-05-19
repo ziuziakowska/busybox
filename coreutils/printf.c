@@ -231,11 +231,14 @@ static void print_direc(char *format, unsigned fmt_length,
 		/* cheat: unsigned long and long have same width, so... */
 		goto print_long;
 	case 's':
+#ifndef __CHERI__
 		/* Are char* and long long the same? */
 		if (sizeof(argument) == sizeof(llv)) {
 			llv = (long long)(ptrdiff_t)argument;
 			goto print_long;
-		} else {
+		} else
+#endif
+		{
 			/* Hope compiler will optimize it out by moving call
 			 * instruction after the ifs... */
 			if (!have_width) {
