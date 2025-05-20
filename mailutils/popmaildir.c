@@ -214,7 +214,8 @@ int popmaildir_main(int argc UNUSED_PARAM, char **argv)
 			monotonic_us(), (unsigned)pid, hostname);
 
 		// retrieve message in ./tmp/ unless filter is specified
-		pop3_check(retr, (const char *)(ptrdiff_t)nmsg);
+		// nmsg is used only as numeric input for varargs, fake ptr is ok here
+		pop3_check(retr, __fakep_u(nmsg));
 
 #if ENABLE_FEATURE_POPMAILDIR_DELIVERY
 		// delivery helper ordered? -> setup pipe
@@ -262,8 +263,9 @@ int popmaildir_main(int argc UNUSED_PARAM, char **argv)
 #endif
 
 		// delete message from server
+		// fake ptr is ok for numeric varargs input
 		if (!(opts & OPT_k))
-			pop3_check("DELE %u", (const char*)(ptrdiff_t)nmsg);
+			pop3_check("DELE %u", __fakep_u(nmsg));
 
 		// atomically move message to ./new/
 		target = xstrdup(filename);
