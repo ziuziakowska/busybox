@@ -711,8 +711,7 @@ static int do_servicing(int fd, unsigned long event_mask)
 	ssize_t bytes;
 	struct devfsd_notify_struct info;
 
-	/* (void*) cast is only in order to match prototype */
-	xioctl(fd, DEVFSDIOC_SET_EVENT_MASK, (void*)event_mask);
+	xioctl(fd, DEVFSDIOC_SET_EVENT_MASK, __fakep_u(event_mask));
 	while (!caught_signal) {
 		errno = 0;
 		bytes = read(fd, (char *) &info, sizeof info);
