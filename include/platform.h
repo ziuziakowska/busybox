@@ -644,4 +644,16 @@ extern int vasprintf(char **string_ptr, const char *format, va_list p) FAST_FUNC
 extern ssize_t getline(char **lineptr, size_t *n, FILE *stream) FAST_FUNC;
 #endif
 
+/* ---- Cheri --------------------------------------- */
+
+static ALWAYS_INLINE void *__fakep(long val)
+{
+	return (void *)(intptr_t)val; /* NOLINT */
+}
+
+static ALWAYS_INLINE void *__fakep_u(unsigned long val)
+{
+	return (void *)(uintptr_t)val; /* NOLINT */
+}
+
 #endif
