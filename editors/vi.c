@@ -1499,9 +1499,9 @@ static void undo_push(char *, unsigned, int);
 // open a hole in text[]
 // might reallocate text[]! use p += text_hole_make(p, ...),
 // and be careful to not use pointers into potentially freed text[]!
-static uintptr_t text_hole_make(char *p, int size)	// at "p", make a 'size' byte hole
+static ptrdiff_t text_hole_make(char *p, int size)	// at "p", make a 'size' byte hole
 {
-	uintptr_t bias = 0;
+	ptrdiff_t bias = 0;
 
 	if (size <= 0)
 		return bias;
@@ -1510,7 +1510,7 @@ static uintptr_t text_hole_make(char *p, int size)	// at "p", make a 'size' byte
 		char *new_text;
 		text_size += end - (text + text_size) + 10240;
 		new_text = xrealloc(text, text_size);
-		bias = (new_text - text);
+		bias = new_text - text;
 		text = new_text;
 		screenbegin += bias; F(screenbegin);
 		dot         += bias; F(dot);
@@ -2100,9 +2100,9 @@ static void showmatching(char *p)
 
 // might reallocate text[]! use p += stupid_insert(p, ...),
 // and be careful to not use pointers into potentially freed text[]!
-static uintptr_t stupid_insert(char *p, char c) // stupidly insert the char c at 'p'
+static ptrdiff_t stupid_insert(char *p, char c) // stupidly insert the char c at 'p'
 {
-	uintptr_t bias;
+	ptrdiff_t bias;
 	bias = text_hole_make(p, 1);
 	p += bias; F(p);
 	*p = c;
@@ -2348,9 +2348,9 @@ static int init_text_buffer(char *fn)
 # if !ENABLE_FEATURE_VI_UNDO
 #  define string_insert(a,b,c) string_insert(a,b)
 # endif
-static uintptr_t string_insert(char *p, const char *s, int undo) // insert the string at 'p'
+static ptrdiff_t string_insert(char *p, const char *s, int undo) // insert the string at 'p'
 {
-	uintptr_t bias;
+	ptrdiff_t bias;
 	int i;
 
 	i = strlen(s);
@@ -3142,7 +3142,7 @@ static void colon(char *buf)
 		if (q == end)
 			num++;
 		{ // dance around potentially-reallocated text[]
-			uintptr_t ofs = q - text;
+			ptrdiff_t ofs = q - text;
 			size = file_insert(fn, q, 0);
 			q = text + ofs;
 		}
@@ -3286,7 +3286,7 @@ static void colon(char *buf)
 			found = char_search(q, F, (FORWARD << 1) | LIMITED);	// search cur line only for "find"
 #  endif
 			if (found) {
-				uintptr_t bias;
+				ptrdiff_t bias;
 				// we found the "find" pattern - delete it
 				// For undo support, the first item should not be chained
 				// This needs to be handled differently depending on
