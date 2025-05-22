@@ -1511,6 +1511,7 @@ static uintptr_t text_hole_make(char *p, int size)	// at "p", make a 'size' byte
 		text_size += end - (text + text_size) + 10240;
 		new_text = xrealloc(text, text_size);
 		bias = (new_text - text);
+		text = new_text;
 		screenbegin += bias; F(screenbegin);
 		dot         += bias; F(dot);
 		end         += bias; F(end);
@@ -1525,7 +1526,6 @@ static uintptr_t text_hole_make(char *p, int size)	// at "p", make a 'size' byte
 				}
 		}
 #endif
-		text = new_text;
 	}
 	memmove(p + size, p, end - size - p);
 	memset(p, ' ', size);	// clear new hole
