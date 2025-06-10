@@ -365,7 +365,7 @@ static void* massage_data_for_non_r_func(struct passdb *db, char *buf)
 
 /****** getXXnam/id_r */
 
-static int FAST_FUNC getXXnam_r(const char *name, uintptr_t db_and_field_pos,
+static int FAST_FUNC getXXnam_r(const char *name, unsigned long db_and_field_pos,
 		char *buffer, size_t buflen,
 		void *result)
 {
@@ -402,7 +402,7 @@ int FAST_FUNC getspnam_r(const char *name, struct spwd *struct_buf, char *buffer
 #ifdef UNUSED
 /****** getXXent_r */
 
-static int FAST_FUNC getXXent_r(uintptr_t db_idx, char *buffer, size_t buflen,
+static int FAST_FUNC getXXent_r(unsigned long db_idx, char *buffer, size_t buflen,
 		void *result)
 {
 	char *buf;
@@ -432,7 +432,7 @@ int FAST_FUNC getpwent_r(struct passwd *struct_buf, char *buffer, size_t buflen,
 
 /****** getXXent */
 
-static void* FAST_FUNC getXXent(uintptr_t db_idx)
+static void* FAST_FUNC getXXent(unsigned long db_idx)
 {
 	char *buf;
 	struct passdb *db = &get_S()->db[db_idx];
