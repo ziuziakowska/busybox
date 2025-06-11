@@ -166,7 +166,7 @@ int shuf_main(int argc, char **argv)
 
 	for (i = numlines - outlines; i < numlines; i++) {
 		if (opts & OPT_i)
-			printf("%llu%c", lo + (uintptr_t)lines[i], eol);
+			printf("%llu%c", lo + (unsigned long long)(uintptr_t)lines[i], eol);
 		else
 			printf("%s%c", lines[i], eol);
 	}
