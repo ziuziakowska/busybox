@@ -3501,17 +3501,21 @@ static int st_test(char *p, int type, int dir, char *tested)
 static char *skip_thing(char *p, int linecnt, int dir, int type)
 {
 	char c;
+	int test;
 
-	while (st_test(p, type, dir, &c)) {
-		// make sure we limit search to correct number of lines
-		if (c == '\n' && --linecnt < 1)
-			break;
+	do {
 		if (dir >= 0 && p >= end - 1)
 			break;
 		if (dir < 0 && p <= text)
 			break;
+
+		test = st_test(p, type, dir, &c);
+		// make sure we limit search to correct number of lines
+		if (c == '\n' && --linecnt < 1)
+			break;
+
 		p += dir;		// move to next char
-	}
+	} while (test);
 	return p;
 }
 
@@ -4180,7 +4184,7 @@ static void do_cmd(int c)
 		if (c == 'B')
 			dir = BACK;
 		do {
-			if (c == 'W' || isspace(dot[dir])) {
+			if (c == 'W' || (&dot[dir] >= text && isspace(dot[dir]))) {
 				dot = skip_thing(dot, 1, dir, S_TO_WS);
 				dot = skip_thing(dot, 2, dir, S_OVER_WS);
 			}
